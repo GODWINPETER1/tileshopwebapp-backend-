@@ -1,3 +1,4 @@
+// controllers/variantController.js
 const ProductVariant = require('../models/productVariant');
 const { safeUnlink } = require('../utils/fileHelpers');
 
@@ -13,7 +14,8 @@ exports.createVariant = (req, res) => {
       m2_per_ctn: parseFloat(req.body.m2_per_ctn) || 0,
       kg_per_ctn: parseFloat(req.body.kg_per_ctn) || 0,
       imageUrl,
-      stock: parseInt(req.body.stock) || 0
+      stock: parseInt(req.body.stock) || 0,
+      tile_type: req.body.tile_type || 'non-slide'
     };
 
     ProductVariant.create(variantData, (error, results) => {
@@ -32,7 +34,9 @@ exports.createVariant = (req, res) => {
 
 exports.getVariantsByProduct = (req, res) => {
   const productId = req.params.productId;
-  ProductVariant.getByProductId(productId, (err, results) => {
+  const tileType = req.query.tileType; // Get tile type from query parameter
+  
+  ProductVariant.getByProductId(productId, tileType, (err, results) => {
     if (err) return res.status(500).json({ success: false, message: 'Database error', error: err.message });
     res.json({ success: true, data: results });
   });
@@ -57,7 +61,8 @@ exports.updateVariant = (req, res) => {
     m2_per_ctn: parseFloat(req.body.m2_per_ctn) || 0,
     kg_per_ctn: parseFloat(req.body.kg_per_ctn) || 0,
     imageUrl: req.file ? `/uploads/images/${req.file.filename}` : req.body.imageUrl,
-    stock: parseInt(req.body.stock) || 0
+    stock: parseInt(req.body.stock) || 0,
+    tile_type: req.body.tile_type || 'non-slide'
   };
 
   ProductVariant.update(id, variantData, (err, results) => {

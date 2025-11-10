@@ -1,10 +1,11 @@
+// models/productVariant.js
 const db = require('../config/db');
 
 class ProductVariant {
   static create(variantData, callback) {
     const q = `INSERT INTO product_variants 
-      (product_id, series, code, size, pcs_per_ctn, m2_per_ctn, kg_per_ctn, image_url, stock)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+      (product_id, series, code, size, pcs_per_ctn, m2_per_ctn, kg_per_ctn, image_url, stock, tile_type)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
     const vals = [
       variantData.product_id,
       variantData.series || null,
@@ -14,27 +15,40 @@ class ProductVariant {
       variantData.m2_per_ctn || 0,
       variantData.kg_per_ctn || 0,
       variantData.imageUrl || null,
-      variantData.stock || 0
+      variantData.stock || 0,
+      variantData.tile_type || 'non-slide'
     ];
     db.query(q, vals, callback);
   }
 
-  static getByProductId(productId, callback) {
-    const q = `SELECT 
-                pv.id, 
-                pv.product_id as productId,
-                pv.series,
-                pv.code,
-                pv.size, 
-                pv.pcs_per_ctn as pcsPerCtn,
-                pv.m2_per_ctn as m2PerCtn,
-                pv.kg_per_ctn as kgPerCtn,
-                pv.image_url as image, 
-                pv.stock
-               FROM product_variants pv
-               WHERE pv.product_id = ? AND pv.is_deleted = FALSE 
-               ORDER BY pv.created_at`;
-    db.query(q, [productId], callback);
+  // Updated method with optional tileType filter
+  static getByProductId(productId, tileType = null, callback) {
+    let q = `SELECT 
+              pv.id, 
+              pv.product_id as productId,
+              pv.series,
+              pv.code,
+              pv.size, 
+              pv.pcs_per_ctn as pcsPerCtn,
+              pv.m2_per_ctn as m2PerCtn,
+              pv.kg_per_ctn as kgPerCtn,
+              pv.image_url as image, 
+              pv.stock,
+              pv.tile_type as tileType
+             FROM product_variants pv
+             WHERE pv.product_id = ? AND pv.is_deleted = FALSE`;
+    
+    const params = [productId];
+    
+    // Add tile type filter if provided
+    if (tileType && (tileType === 'slide' || tileType === 'non-slide')) {
+      q += ' AND pv.tile_type = ?';
+      params.push(tileType);
+    }
+    
+    q += ' ORDER BY pv.created_at';
+    
+    db.query(q, params, callback);
   }
 
   static getById(id, callback) {
@@ -48,7 +62,8 @@ class ProductVariant {
                 pv.m2_per_ctn as m2PerCtn,
                 pv.kg_per_ctn as kgPerCtn,
                 pv.image_url as image, 
-                pv.stock
+                pv.stock,
+                pv.tile_type as tileType
                FROM product_variants pv
                WHERE pv.id = ? AND pv.is_deleted = FALSE`;
     db.query(q, [id], callback);
@@ -56,7 +71,7 @@ class ProductVariant {
 
   static update(id, data, callback) {
     const q = `UPDATE product_variants 
-               SET series=?, code=?, size=?, pcs_per_ctn=?, m2_per_ctn=?, kg_per_ctn=?, image_url=?, stock=? 
+               SET series=?, code=?, size=?, pcs_per_ctn=?, m2_per_ctn=?, kg_per_ctn=?, image_url=?, stock=?, tile_type=?
                WHERE id = ?`;
     const vals = [
       data.series,
@@ -67,10 +82,13 @@ class ProductVariant {
       data.kg_per_ctn,
       data.imageUrl,
       data.stock,
+      data.tile_type || 'non-slide',
       id
     ];
     db.query(q, vals, callback);
   }
+
+  // Remove getByTileType method since we're using the enhanced getByProductId
 
   static softDelete(id, callback) {
     const q = `UPDATE product_variants SET is_deleted = TRUE WHERE id = ?`;
