@@ -6,6 +6,8 @@ exports.createVariant = (req, res) => {
     const imageUrl = req.file ? `/uploads/images/${req.file.filename}` : null;
     const variantData = {
       product_id: req.body.product_id,
+      series: req.body.series,
+      code: req.body.code,
       size: req.body.size,
       pcs_per_ctn: parseInt(req.body.pcs_per_ctn) || 0,
       m2_per_ctn: parseFloat(req.body.m2_per_ctn) || 0,
@@ -48,6 +50,8 @@ exports.getVariantById = (req, res) => {
 exports.updateVariant = (req, res) => {
   const id = req.params.id;
   const variantData = {
+    series: req.body.series,
+    code: req.body.code,
     size: req.body.size,
     pcs_per_ctn: parseInt(req.body.pcs_per_ctn) || 0,
     m2_per_ctn: parseFloat(req.body.m2_per_ctn) || 0,
@@ -67,7 +71,6 @@ exports.updateVariant = (req, res) => {
 
 exports.deleteVariant = (req, res) => {
   const id = req.params.id;
-  // soft delete
   ProductVariant.softDelete(id, (err, results) => {
     if (err) return res.status(500).json({ success: false, message: 'DB error', error: err.message });
     res.json({ success: true, message: 'Variant deleted' });

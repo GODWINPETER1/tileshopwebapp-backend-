@@ -48,8 +48,6 @@ exports.createProduct = (req, res) => {
     const productData = {
       name: req.body.name,
       brand: req.body.brand,
-      series: req.body.series,
-      code: req.body.code,
       mainImageUrl,
       description: req.body.description,
       category: req.body.category 
@@ -62,7 +60,6 @@ exports.createProduct = (req, res) => {
         return res.status(500).json({ success: false, message: 'Database error', error: error.message });
       }
 
-      // Return id so front-end can create variants by calling variants endpoint
       res.status(201).json({
         success: true,
         message: 'Product created successfully',
@@ -80,8 +77,6 @@ exports.updateProduct = (req, res) => {
   const productData = {
     name: req.body.name,
     brand: req.body.brand,
-    series: req.body.series,
-    code: req.body.code,
     mainImageUrl: req.file ? `/uploads/images/${req.file.filename}` : req.body.mainImageUrl,
     description: req.body.description
   };
@@ -97,11 +92,9 @@ exports.updateProduct = (req, res) => {
   });
 };
 
-// Soft delete or hard delete depending on your preference
 exports.deleteProduct = (req, res) => {
   const productId = req.params.id;
 
-  // Example: soft delete
   Product.softDelete(productId, (error, results) => {
     if (error) {
       console.error('Database error:', error);

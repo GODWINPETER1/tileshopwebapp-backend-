@@ -3,7 +3,7 @@ const db = require('../config/db');
 class Product {
   static getAll(callback) {
     const query = `
-      SELECT id, name, code, main_image_url as image, description, brand, series, category
+      SELECT id, name, main_image_url as image, description, brand, category
       FROM products WHERE is_deleted = FALSE ORDER BY created_at DESC
     `;
     db.query(query, callback);
@@ -11,22 +11,27 @@ class Product {
 
   static getById(id, callback) {
     const productQuery = `
-      SELECT id, name, code, main_image_url as image, description, brand, series
+      SELECT id, name, main_image_url as image, description, brand, category
       FROM products WHERE id = ? AND is_deleted = FALSE
     `;
 
     db.query(productQuery, [id], (err, productRows) => {
       if (err) return callback(err);
-      if (!productRows || productRows.length === 0) return callback(null, null); // not found
+      if (!productRows || productRows.length === 0) return callback(null, null);
 
       const product = productRows[0];
 
-      // Updated variant query - removed color and price
+      // Updated variant query - now includes series and code
       const variantQuery = `
         SELECT 
           pv.id, 
           pv.product_id as productId,
+          pv.series,
+          pv.code,
           pv.size, 
+          pv.pcs_per_ctn as pcsPerCtn,
+          pv.m2_per_ctn as m2PerCtn,
+          pv.kg_per_ctn as kgPerCtn,
           pv.image_url as image, 
           pv.stock
         FROM product_variants pv 
@@ -36,27 +41,17 @@ class Product {
       db.query(variantQuery, [id], (vErr, variants) => {
         if (vErr) return callback(vErr);
         
-        // Add temporary default values for new fields
-        const variantsWithDefaults = (variants || []).map(variant => ({
-          ...variant,
-          pcsPerCtn: 0,
-          m2PerCtn: 0,
-          kgPerCtn: 0
-        }));
-        
-        product.variants = variantsWithDefaults;
+        product.variants = variants || [];
         callback(null, product);
       });
     });
   }
 
   static create(productData, callback) {
-    const q = `INSERT INTO products (name, brand, series, code, main_image_url, description, category) VALUES (?, ?, ?, ?, ?, ?, ?)`;
+    const q = `INSERT INTO products (name, brand, main_image_url, description, category) VALUES (?, ?, ?, ?, ?)`;
     const vals = [
       productData.name,
       productData.brand,
-      productData.series,
-      productData.code,
       productData.mainImageUrl,
       productData.description,
       productData.category || 'tiles'
@@ -64,23 +59,21 @@ class Product {
     db.query(q, vals, callback);
   }
 
- static getByCategory(category, callback) {
-  const query = `
-    SELECT id, name, code, main_image_url as image, description, brand, series, category
-    FROM products 
-    WHERE is_deleted = FALSE AND category = ? 
-    ORDER BY created_at DESC
-  `;
-  db.query(query, [category], callback);
-}
+  static getByCategory(category, callback) {
+    const query = `
+      SELECT id, name, main_image_url as image, description, brand, category
+      FROM products 
+      WHERE is_deleted = FALSE AND category = ? 
+      ORDER BY created_at DESC
+    `;
+    db.query(query, [category], callback);
+  }
 
   static update(id, productData, callback) {
-    const q = `UPDATE products SET name=?, brand=?, series=?, code=?, main_image_url=?, description=? WHERE id=?`;
+    const q = `UPDATE products SET name=?, brand=?, main_image_url=?, description=? WHERE id=?`;
     const vals = [
       productData.name,
       productData.brand,
-      productData.series,
-      productData.code,
       productData.mainImageUrl,
       productData.description,
       id
