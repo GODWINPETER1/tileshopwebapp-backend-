@@ -21,9 +21,10 @@ class ProductVariant {
     db.query(q, vals, callback);
   }
 
-  // Updated method with optional tileType filter
-  static getByProductId(productId, tileType = null, callback) {
-    let q = `SELECT 
+
+// Updated method with optional tileType filter
+static getByProductId(productId, tileType = null, callback) {
+  let q = `SELECT 
               pv.id, 
               pv.product_id as productId,
               pv.series,
@@ -35,21 +36,21 @@ class ProductVariant {
               pv.image_url as image, 
               pv.stock,
               pv.tile_type as tileType
-             FROM product_variants pv
-             WHERE pv.product_id = ? AND pv.is_deleted = FALSE`;
-    
-    const params = [productId];
-    
-    // Add tile type filter if provided
-    if (tileType && (tileType === 'slide' || tileType === 'non-slide')) {
-      q += ' AND pv.tile_type = ?';
-      params.push(tileType);
-    }
-    
-    q += ' ORDER BY pv.created_at';
-    
-    db.query(q, params, callback);
+           FROM product_variants pv
+           WHERE pv.product_id = ? AND pv.is_deleted = FALSE`;
+
+  const params = [productId];
+
+  if (tileType && (tileType === 'slide' || tileType === 'non-slide')) {
+    q += ' AND pv.tile_type = ?';
+    params.push(tileType);
   }
+
+  q += ' ORDER BY pv.updated_at DESC';
+
+  db.query(q, params, callback);
+}
+
 
   static getById(id, callback) {
     const q = `SELECT 
