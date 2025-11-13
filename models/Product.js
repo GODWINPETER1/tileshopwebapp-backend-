@@ -3,7 +3,7 @@ const db = require('../config/db');
 class Product {
   static getAll(callback) {
     const query = `
-      SELECT id, name, mainImageUrl as image, description, brand, category
+      SELECT id, name, main_image_url as image, description, brand, category
       FROM products WHERE isDeleted = FALSE ORDER BY created_at DESC
     `;
     db.query(query, callback);
@@ -11,7 +11,7 @@ class Product {
 
   static getById(id, callback) {
     const productQuery = `
-      SELECT id, name, mainImageUrl as image, description, brand, category
+      SELECT id, name, main_image_url as image, description, brand, category
       FROM products WHERE id = ? AND isDeleted = FALSE
     `;
 
@@ -48,11 +48,11 @@ class Product {
   }
 
   static create(productData, callback) {
-    const q = `INSERT INTO products (name, brand, mainImageUrl, description, category) VALUES (?, ?, ?, ?, ?)`;
+    const q = `INSERT INTO products (name, brand, main_image_url, description, category) VALUES (?, ?, ?, ?, ?)`;
     const vals = [
       productData.name,
       productData.brand,
-      productData.mainImageUrl,
+      productData.main_image_url,
       productData.description,
       productData.category || 'tiles'
     ];
@@ -61,7 +61,7 @@ class Product {
 
   static getByCategory(category, callback) {
     const query = `
-      SELECT id, name, mainImageUrl as image, description, brand, category
+      SELECT id, name, main_image_url as image, description, brand, category
       FROM products 
       WHERE isDeleted = FALSE AND category = ? 
       ORDER BY created_at DESC
@@ -70,11 +70,11 @@ class Product {
   }
 
   static update(id, productData, callback) {
-    const q = `UPDATE products SET name=?, brand=?, mainImageUrl=?, description=? WHERE id=?`;
+    const q = `UPDATE products SET name=?, brand=?, main_image_url=?, description=? WHERE id=?`;
     const vals = [
       productData.name,
       productData.brand,
-      productData.mainImageUrl,
+      productData.main_image_url,
       productData.description,
       id
     ];
