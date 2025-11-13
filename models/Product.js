@@ -3,16 +3,16 @@ const db = require('../config/db');
 class Product {
   static getAll(callback) {
     const query = `
-      SELECT id, name, main_image_url as image, description, brand, category
-      FROM products WHERE is_deleted = FALSE ORDER BY created_at DESC
+      SELECT id, name, mainImageUrl as image, description, brand, category
+      FROM products WHERE isDeleted = FALSE ORDER BY created_at DESC
     `;
     db.query(query, callback);
   }
 
   static getById(id, callback) {
     const productQuery = `
-      SELECT id, name, main_image_url as image, description, brand, category
-      FROM products WHERE id = ? AND is_deleted = FALSE
+      SELECT id, name, mainImageUrl as image, description, brand, category
+      FROM products WHERE id = ? AND isDeleted = FALSE
     `;
 
     db.query(productQuery, [id], (err, productRows) => {
@@ -32,10 +32,10 @@ class Product {
           pv.pcs_per_ctn as pcsPerCtn,
           pv.m2_per_ctn as m2PerCtn,
           pv.kg_per_ctn as kgPerCtn,
-          pv.image_url as image, 
+          pv.imageUrl as image, 
           pv.stock
         FROM product_variants pv 
-        WHERE pv.product_id = ? AND pv.is_deleted = FALSE
+        WHERE pv.product_id = ? AND pv.isDeleted = FALSE
       `;
       
       db.query(variantQuery, [id], (vErr, variants) => {
@@ -48,7 +48,7 @@ class Product {
   }
 
   static create(productData, callback) {
-    const q = `INSERT INTO products (name, brand, main_image_url, description, category) VALUES (?, ?, ?, ?, ?)`;
+    const q = `INSERT INTO products (name, brand, mainImageUrl, description, category) VALUES (?, ?, ?, ?, ?)`;
     const vals = [
       productData.name,
       productData.brand,
@@ -61,16 +61,16 @@ class Product {
 
   static getByCategory(category, callback) {
     const query = `
-      SELECT id, name, main_image_url as image, description, brand, category
+      SELECT id, name, mainImageUrl as image, description, brand, category
       FROM products 
-      WHERE is_deleted = FALSE AND category = ? 
+      WHERE isDeleted = FALSE AND category = ? 
       ORDER BY created_at DESC
     `;
     db.query(query, [category], callback);
   }
 
   static update(id, productData, callback) {
-    const q = `UPDATE products SET name=?, brand=?, main_image_url=?, description=? WHERE id=?`;
+    const q = `UPDATE products SET name=?, brand=?, mainImageUrl=?, description=? WHERE id=?`;
     const vals = [
       productData.name,
       productData.brand,
@@ -82,7 +82,7 @@ class Product {
   }
 
   static softDelete(id, callback) {
-    const q = `UPDATE products SET is_deleted = TRUE WHERE id = ?`;
+    const q = `UPDATE products SET isDeleted = TRUE WHERE id = ?`;
     db.query(q, [id], callback);
   }
 

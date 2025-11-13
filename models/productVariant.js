@@ -4,7 +4,7 @@ const db = require('../config/db');
 class ProductVariant {
   static create(variantData, callback) {
     const q = `INSERT INTO product_variants 
-      (product_id, series, code, size, pcs_per_ctn, m2_per_ctn, kg_per_ctn, image_url, stock, tile_type)
+      (product_id, series, code, size, pcs_per_ctn, m2_per_ctn, kg_per_ctn, imageUrl, stock, tile_type)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
     const vals = [
       variantData.product_id,
@@ -33,11 +33,11 @@ static getByProductId(productId, tileType = null, callback) {
               pv.pcs_per_ctn as pcsPerCtn,
               pv.m2_per_ctn as m2PerCtn,
               pv.kg_per_ctn as kgPerCtn,
-              pv.image_url as image, 
+              pv.imageUrl as image, 
               pv.stock,
               pv.tile_type as tileType
            FROM product_variants pv
-           WHERE pv.product_id = ? AND pv.is_deleted = FALSE`;
+           WHERE pv.product_id = ? AND pv.isDeleted = FALSE`;
 
   const params = [productId];
 
@@ -46,7 +46,7 @@ static getByProductId(productId, tileType = null, callback) {
     params.push(tileType);
   }
 
-  q += ' ORDER BY pv.updated_at DESC';
+  q += ' ORDER BY pv.created_at DESC';
 
   db.query(q, params, callback);
 }
@@ -62,17 +62,17 @@ static getByProductId(productId, tileType = null, callback) {
                 pv.pcs_per_ctn as pcsPerCtn,
                 pv.m2_per_ctn as m2PerCtn,
                 pv.kg_per_ctn as kgPerCtn,
-                pv.image_url as image, 
+                pv.imageUrl as image, 
                 pv.stock,
                 pv.tile_type as tileType
                FROM product_variants pv
-               WHERE pv.id = ? AND pv.is_deleted = FALSE`;
+               WHERE pv.id = ? AND pv.isDeleted = FALSE`;
     db.query(q, [id], callback);
   }
 
   static update(id, data, callback) {
     const q = `UPDATE product_variants 
-               SET series=?, code=?, size=?, pcs_per_ctn=?, m2_per_ctn=?, kg_per_ctn=?, image_url=?, stock=?, tile_type=?
+               SET series=?, code=?, size=?, pcs_per_ctn=?, m2_per_ctn=?, kg_per_ctn=?, imageUrl=?, stock=?, tile_type=?
                WHERE id = ?`;
     const vals = [
       data.series,
