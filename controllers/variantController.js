@@ -4,7 +4,7 @@ const { safeUnlink } = require('../utils/fileHelpers');
 
 exports.createVariant = (req, res) => {
   try {
-    const imageUrl = req.file ? `/uploads/images/${req.file.filename}` : null;
+    const imageUrl = req.file ? req.file.path : null;
     const variantData = {
       product_id: req.body.product_id,
       series: req.body.series,
@@ -60,7 +60,7 @@ exports.updateVariant = (req, res) => {
     pcs_per_ctn: parseInt(req.body.pcs_per_ctn) || 0,
     m2_per_ctn: parseFloat(req.body.m2_per_ctn) || 0,
     kg_per_ctn: parseFloat(req.body.kg_per_ctn) || 0,
-    imageUrl: req.file ? `/uploads/images/${req.file.filename}` : req.body.imageUrl,
+    imageUrl: req.file ? req.file.path : req.body.imageUrl,
     stock: parseInt(req.body.stock) || 0,
     tile_type: req.body.tile_type || 'non-slide'
   };

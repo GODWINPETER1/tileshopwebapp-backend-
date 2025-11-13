@@ -43,7 +43,7 @@ exports.getProductsByCategory = (req, res) => {
 
 exports.createProduct = (req, res) => {
   try {
-    const mainImageUrl = req.file ? `/uploads/images/${req.file.filename}` : null;
+    const mainImageUrl = req.file ? req.file.path : null; // Cloudinary gives you a full URL
 
     const productData = {
       name: req.body.name,
@@ -77,7 +77,7 @@ exports.updateProduct = (req, res) => {
   const productData = {
     name: req.body.name,
     brand: req.body.brand,
-    mainImageUrl: req.file ? `/uploads/images/${req.file.filename}` : req.body.mainImageUrl,
+    mainImageUrl: req.file ? req.file.path : req.body.mainImageUrl,
     description: req.body.description
   };
 
