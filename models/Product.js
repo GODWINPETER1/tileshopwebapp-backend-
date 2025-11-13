@@ -32,7 +32,7 @@ class Product {
           pv.pcs_per_ctn as pcsPerCtn,
           pv.m2_per_ctn as m2PerCtn,
           pv.kg_per_ctn as kgPerCtn,
-          pv.main_image_url as image, 
+          pv.image_url as image, 
           pv.stock
         FROM product_variants pv 
         WHERE pv.product_id = ? AND pv.is_deleted = FALSE
