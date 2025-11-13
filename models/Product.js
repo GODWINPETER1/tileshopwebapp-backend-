@@ -4,7 +4,7 @@ class Product {
   static getAll(callback) {
     const query = `
       SELECT id, name, main_image_url as image, description, brand, category
-      FROM products WHERE isDeleted = FALSE ORDER BY created_at DESC
+      FROM products WHERE is_deleted = FALSE ORDER BY created_at DESC
     `;
     db.query(query, callback);
   }
@@ -12,7 +12,7 @@ class Product {
   static getById(id, callback) {
     const productQuery = `
       SELECT id, name, main_image_url as image, description, brand, category
-      FROM products WHERE id = ? AND isDeleted = FALSE
+      FROM products WHERE id = ? AND is_deleted = FALSE
     `;
 
     db.query(productQuery, [id], (err, productRows) => {
@@ -35,7 +35,7 @@ class Product {
           pv.imageUrl as image, 
           pv.stock
         FROM product_variants pv 
-        WHERE pv.product_id = ? AND pv.isDeleted = FALSE
+        WHERE pv.product_id = ? AND pv.is_deleted = FALSE
       `;
       
       db.query(variantQuery, [id], (vErr, variants) => {
@@ -63,7 +63,7 @@ class Product {
     const query = `
       SELECT id, name, main_image_url as image, description, brand, category
       FROM products 
-      WHERE isDeleted = FALSE AND category = ? 
+      WHERE is_deleted = FALSE AND category = ? 
       ORDER BY created_at DESC
     `;
     db.query(query, [category], callback);
@@ -82,7 +82,7 @@ class Product {
   }
 
   static softDelete(id, callback) {
-    const q = `UPDATE products SET isDeleted = TRUE WHERE id = ?`;
+    const q = `UPDATE products SET is_deleted = TRUE WHERE id = ?`;
     db.query(q, [id], callback);
   }
 
