@@ -1,17 +1,18 @@
+// middleware/upload.js
 const multer = require('multer');
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const cloudinary = require('../config/cloudinary');
 
-// Configure Cloudinary storage for Multer
+// Define Cloudinary storage
 const storage = new CloudinaryStorage({
   cloudinary,
   params: {
-    folder: 'tile-shop-images', // Cloudinary folder name
+    folder: 'tiles-app', // ✅ change folder name to whatever you like
     allowed_formats: ['jpg', 'jpeg', 'png', 'webp'],
+    transformation: [{ width: 1000, height: 1000, crop: 'limit' }],
   },
 });
 
-// Initialize multer with Cloudinary storage
 const upload = multer({ storage });
 
 module.exports = upload;

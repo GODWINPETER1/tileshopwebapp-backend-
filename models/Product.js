@@ -21,7 +21,6 @@ class Product {
 
       const product = productRows[0];
 
-      // Updated variant query - now includes series and code
       const variantQuery = `
         SELECT 
           pv.id, 
@@ -33,7 +32,8 @@ class Product {
           pv.m2_per_ctn as m2PerCtn,
           pv.kg_per_ctn as kgPerCtn,
           pv.image_url as image, 
-          pv.stock
+          pv.stock,
+          pv.tile_type as tileType
         FROM product_variants pv 
         WHERE pv.product_id = ? AND pv.is_deleted = FALSE
       `;
@@ -52,7 +52,7 @@ class Product {
     const vals = [
       productData.name,
       productData.brand,
-      productData.main_image_url,
+      productData.mainImageUrl, // ← CHANGED: main_image_url → mainImageUrl
       productData.description,
       productData.category || 'tiles'
     ];
@@ -74,7 +74,7 @@ class Product {
     const vals = [
       productData.name,
       productData.brand,
-      productData.main_image_url,
+      productData.mainImageUrl, // ← CHANGED: main_image_url → mainImageUrl
       productData.description,
       id
     ];

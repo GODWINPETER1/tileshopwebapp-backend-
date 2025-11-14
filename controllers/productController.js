@@ -44,6 +44,8 @@ exports.getProductsByCategory = (req, res) => {
 exports.createProduct = (req, res) => {
   try {
     const mainImageUrl = req.file ? req.file.path : null; // Cloudinary gives you a full URL
+    console.log('Uploaded file:', req.file );
+    console.log('cloudinary URL:' , mainImageUrl)
 
     const productData = {
       name: req.body.name,
