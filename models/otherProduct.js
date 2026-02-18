@@ -33,7 +33,7 @@ class OtherProduct {
       data.name,
       data.brand || null,
       data.description || null,
-      data.imageUrl || null,
+      data.image || null,   // ✅ FIXED
       data.price || 0,
       data.stock || 0,
       data.category || null
@@ -54,7 +54,7 @@ class OtherProduct {
       data.name,
       data.brand,
       data.description,
-      data.imageUrl,
+      data.image,  // ✅ FIXED
       data.price,
       data.stock,
       data.category,
