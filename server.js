@@ -36,6 +36,7 @@ app.get('/health', (req, res) => {
 // Routes
 app.use('/api/products', require('./routes/product'));
 app.use('/api/variants', require('./routes/variants'));
+app.use('/api/other-products' , require('./routes/otherProducts'))
 
 // Basic route
 app.get('/', (req, res) => {
