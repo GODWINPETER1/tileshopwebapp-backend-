@@ -11,7 +11,7 @@ app.use(cors({
   origin: '*',
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With' ,'X-Cart-Session' ]
 }));
 
 // Handle preflight requests
@@ -36,7 +36,9 @@ app.get('/health', (req, res) => {
 // Routes
 app.use('/api/products', require('./routes/product'));
 app.use('/api/variants', require('./routes/variants'));
-app.use('/api/other-products' , require('./routes/otherProducts'))
+app.use('/api/other-products' , require('./routes/otherProducts'));
+app.use('/api/cart', require('./routes/cart'));
+app.use('/api/orders' , require('./routes/order'));
 
 // Basic route
 app.get('/', (req, res) => {
