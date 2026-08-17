@@ -53,6 +53,10 @@ exports.getVariantById = (req, res) => {
 
 exports.updateVariant = (req, res) => {
   const id = req.params.id;
+
+  exports.updateVariant = (req, res) => {
+  const id = req.params.id;
+
   const variantData = {
     series: req.body.series,
     code: req.body.code,
@@ -60,10 +64,40 @@ exports.updateVariant = (req, res) => {
     pcs_per_ctn: parseInt(req.body.pcs_per_ctn) || 0,
     m2_per_ctn: parseFloat(req.body.m2_per_ctn) || 0,
     kg_per_ctn: parseFloat(req.body.kg_per_ctn) || 0,
-    imageUrl: req.file ? req.file.path : req.body.imageUrl,
     stock: parseInt(req.body.stock) || 0,
     tile_type: req.body.tile_type || 'non-slide'
   };
+
+  // Only update the image if a NEW image was uploaded
+  if (req.file) {
+    variantData.imageUrl = req.file.path;
+  }
+
+  ProductVariant.update(
+    id,
+    variantData,
+    (err, results) => {
+
+      if (err) {
+        // Delete newly uploaded file if database update fails
+        if (req.file) {
+          safeUnlink(req.file.path);
+        }
+
+        return res.status(500).json({
+          success: false,
+          message: 'DB error',
+          error: err.message
+        });
+      }
+
+      res.json({
+        success: true,
+        message: 'Variant updated'
+      });
+    }
+  );
+};
 
   ProductVariant.update(id, variantData, (err, results) => {
     if (err) {
