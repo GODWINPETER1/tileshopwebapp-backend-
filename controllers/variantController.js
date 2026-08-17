@@ -54,9 +54,6 @@ exports.getVariantById = (req, res) => {
 exports.updateVariant = (req, res) => {
   const id = req.params.id;
 
-  exports.updateVariant = (req, res) => {
-  const id = req.params.id;
-
   const variantData = {
     series: req.body.series,
     code: req.body.code,
@@ -68,7 +65,7 @@ exports.updateVariant = (req, res) => {
     tile_type: req.body.tile_type || 'non-slide'
   };
 
-  // Only update the image if a NEW image was uploaded
+  // Only update the image when a NEW image is uploaded
   if (req.file) {
     variantData.imageUrl = req.file.path;
   }
@@ -77,9 +74,10 @@ exports.updateVariant = (req, res) => {
     id,
     variantData,
     (err, results) => {
-
       if (err) {
-        // Delete newly uploaded file if database update fails
+        console.error('Update variant DB error:', err);
+
+        // Remove newly uploaded image if database update fails
         if (req.file) {
           safeUnlink(req.file.path);
         }
@@ -91,21 +89,12 @@ exports.updateVariant = (req, res) => {
         });
       }
 
-      res.json({
+      return res.json({
         success: true,
         message: 'Variant updated'
       });
     }
   );
-};
-
-  ProductVariant.update(id, variantData, (err, results) => {
-    if (err) {
-      if (req.file) safeUnlink(req.file.path);
-      return res.status(500).json({ success: false, message: 'DB error', error: err.message });
-    }
-    res.json({ success: true, message: 'Variant updated' });
-  });
 };
 
 exports.deleteVariant = (req, res) => {
