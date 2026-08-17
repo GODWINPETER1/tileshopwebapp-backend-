@@ -68,24 +68,42 @@ class ProductVariant {
     db.query(q, [id], callback);
   }
 
-  static update(id, data, callback) {
-    const q = `UPDATE product_variants 
-               SET series=?, code=?, size=?, pcs_per_ctn=?, m2_per_ctn=?, kg_per_ctn=?, image_url=?, stock=?, tile_type=?
-               WHERE id = ?`;
-    const vals = [
-      data.series,
-      data.code,
-      data.size,
-      data.pcs_per_ctn,
-      data.m2_per_ctn,
-      data.kg_per_ctn,
-      data.imageUrl, // ← Make sure this matches controller
-      data.stock,
-      data.tile_type || 'non-slide',
-      id
-    ];
-    db.query(q, vals, callback);
+ static update(id, data, callback) {
+  let q = `
+    UPDATE product_variants
+    SET
+      series = ?,
+      code = ?,
+      size = ?,
+      pcs_per_ctn = ?,
+      m2_per_ctn = ?,
+      kg_per_ctn = ?,
+      stock = ?,
+      tile_type = ?
+  `;
+
+  const vals = [
+    data.series,
+    data.code,
+    data.size,
+    data.pcs_per_ctn,
+    data.m2_per_ctn,
+    data.kg_per_ctn,
+    data.stock,
+    data.tile_type || 'non-slide'
+  ];
+
+  // Only change image_url when a NEW image was uploaded
+  if (data.imageUrl) {
+    q += `, image_url = ?`;
+    vals.push(data.imageUrl);
   }
+
+  q += ` WHERE id = ?`;
+  vals.push(id);
+
+  db.query(q, vals, callback);
+}
 
   static softDelete(id, callback) {
     const q = `UPDATE product_variants SET is_deleted = TRUE WHERE id = ?`;
