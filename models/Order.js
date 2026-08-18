@@ -74,21 +74,21 @@ class Order {
         // 3. Validate stock
         // -------------------------------------------------
 
-        const unavailableItem = items.find(
-          (item) =>
-            item.quantity > item.stock
-        );
+        // const unavailableItem = items.find(
+        //   (item) =>
+        //     item.quantity > item.stock
+        // );
 
-        if (unavailableItem) {
+        // if (unavailableItem) {
 
-          const error = new Error(
-            `Insufficient stock for ${unavailableItem.productName} (${unavailableItem.size || unavailableItem.code || 'variant'})`
-          );
+        //   const error = new Error(
+        //     `Insufficient stock for ${unavailableItem.productName} (${unavailableItem.size || unavailableItem.code || 'variant'})`
+        //   );
 
-          error.code = 'INSUFFICIENT_STOCK';
+        //   error.code = 'INSUFFICIENT_STOCK';
 
-          return callback(error);
-        }
+        //   return callback(error);
+        // }
 
         // -------------------------------------------------
         // 4. Generate order number
