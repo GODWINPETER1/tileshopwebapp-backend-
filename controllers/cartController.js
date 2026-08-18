@@ -219,26 +219,26 @@ exports.addToCart = (req, res) => {
             const variant = variants[0];
 
             // No stock
-            if (variant.stock <= 0) {
-              return res.status(400).json({
-                success: false,
-                message:
-                  'This product is out of stock'
-              });
-            }
+            // if (variant.stock <= 0) {
+            //   return res.status(400).json({
+            //     success: false,
+            //     message:
+            //       'This product is out of stock'
+            //   });
+            // }
 
 
             // Requested quantity exceeds stock
-            if (
-              requestedQuantity >
-              variant.stock
-            ) {
-              return res.status(400).json({
-                success: false,
-                message:
-                  `Only ${variant.stock} item(s) available in stock`
-              });
-            }
+            // if (
+            //   requestedQuantity >
+            //   variant.stock
+            // ) {
+            //   return res.status(400).json({
+            //     success: false,
+            //     message:
+            //       `Only ${variant.stock} item(s) available in stock`
+            //   });
+            // }
 
 
             // ------------------------------------------------
@@ -278,16 +278,16 @@ exports.addToCart = (req, res) => {
 
 
                   // Check combined quantity
-                  if (
-                    newQuantity >
-                    variant.stock
-                  ) {
-                    return res.status(400).json({
-                      success: false,
-                      message:
-                        `You can only add up to ${variant.stock} item(s) of this variant`
-                    });
-                  }
+                  // if (
+                  //   newQuantity >
+                  //   variant.stock
+                  // ) {
+                  //   return res.status(400).json({
+                  //     success: false,
+                  //     message:
+                  //       `You can only add up to ${variant.stock} item(s) of this variant`
+                  //   });
+                  // }
 
 
                   return Cart.updateItemQuantity(
@@ -512,13 +512,13 @@ exports.updateCartItem = (req, res) => {
 
           const item = items[0];
 
-          if (requestedQuantity > item.stock) {
-            return res.status(400).json({
-              success: false,
-              message:
-                `Only ${item.stock} item(s) available in stock`
-            });
-          }
+          // if (requestedQuantity > item.stock) {
+          //   return res.status(400).json({
+          //     success: false,
+          //     message:
+          //       `Only ${item.stock} item(s) available in stock`
+          //   });
+          // }
 
           Cart.updateItemQuantity(
             itemId,
